@@ -1,0 +1,7 @@
+
+[testing]
+black>=22.0
+flake8>=5.0
+mypy>=0.970
+pytest>=7.0
+pytest-cov>=3.0
