@@ -14,20 +14,23 @@ import math
 from typing import Sequence
 from typing import TypeVar
 
+
 @dataclasses.dataclass(frozen=True)
 class LebedevOrientation:
     polar: float
     azimuthal: float
+
 
 class Lebedev3(enum.Enum):
     ORIENT_X = enum.auto()
     ORIENT_Y = enum.auto()
     ORIENT_Z = enum.auto()
 
+
 LEBEDEV3_ANGLES = {
-    Lebedev3.ORIENT_X : LebedevOrientation(0.5*math.pi, 0.0),
-    Lebedev3.ORIENT_Y : LebedevOrientation(0.5*math.pi, 0.5*math.pi),
-    Lebedev3.ORIENT_Z : LebedevOrientation(0.0, 0.0),
+    Lebedev3.ORIENT_X: LebedevOrientation(0.5 * math.pi, 0.0),
+    Lebedev3.ORIENT_Y: LebedevOrientation(0.5 * math.pi, 0.5 * math.pi),
+    Lebedev3.ORIENT_Z: LebedevOrientation(0.0, 0.0),
 }
 
 # NOTE: several operations depend on the order of the orientations with a given
@@ -39,6 +42,7 @@ LEBEDEV3_ORDERED_ORIENTATIONS = [
     Lebedev3.ORIENT_Z,
 ]
 
+
 class Lebedev5(enum.Enum):
     ORIENT_X = enum.auto()
     ORIENT_Y = enum.auto()
@@ -49,7 +53,8 @@ class Lebedev5(enum.Enum):
     ORIENT_D = enum.auto()
 
 
-Orientations = TypeVar('Orientations', Lebedev3, Lebedev5)
+Orientations = TypeVar("Orientations", Lebedev3, Lebedev5)
+
 
 class LebedevOrientationGenerator:
     _orientations: list[Orientations]

@@ -9,23 +9,38 @@ from typing import Sequence
 from hydro4b_coords import geometries
 from hydro4b_coords import lebedev
 from hydro4b_coords import molecule
+from hydro4b_coords import mrcc_input
 
-def main():
-    centres_of_mass = geometries.tetrahedron(1.0)
+def get_molecules():
+    centres_of_mass = geometries.equilateral_triangle(1.0)
     bondlength = 0.1
 
     lebedev_scheme = lebedev.Lebedev3
     lebedevgen = lebedev.LebedevOrientationGenerator(lebedev_scheme)
     lebedevgen.set_n_yielded_orientations(len(centres_of_mass))
 
-    print(lebedevgen.combination(0, 0, 0, 1))
+    orientations = lebedevgen.combination(1, 0, 2)
+    return molecule.get_molecules(centres_of_mass, orientations, bondlength)
 
-    for orientations in lebedevgen:
-        for mol in molecule.get_molecules(centres_of_mass, orientations, bondlength):
-            print(mol.atoms)
-            print(mol.is_ghost)
-        exit()
+def try_mrcc_input():
+    mrccdata = mrcc_input.MRCCInputFileData()
+    mrccdata.set_calculation_type('ccsd(t)')
+    mrccdata.set_memory_in_mb(2048)
+    mrccdata.set_coupledcluster_tolerance(9)
+    mrccdata.set_coupledcluster_maxiterations(100)
+    mrccdata.set_scf_energy_tolerance(7)
+    mrccdata.set_scf_density_tolerance(7)
+    mrccdata.set_scf_maxiterations(100)
+    
+    mrccdata.set_atom_centred_basis('aug-cc-pVTZ')
+    mrccdata.set_midbond_basis('midbond-3s3p2d')
+    
+    molecules = get_molecules()
+    molecules[0].set_ghost(True)
+    mrccdata.set_molecules(molecules)
+    
+    print(mrcc_input.write_mrcc_input_file(mrccdata))
 
 
 if __name__ == "__main__":
-    main()
+    try_mrcc_input()

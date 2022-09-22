@@ -11,6 +11,7 @@ from cartesian import Cartesian3D
 from hydro4b_coords import lebedev
 from hydro4b_coords import spherical
 
+
 class HydrogenMoleculeInfo:
     _atom0: Cartesian3D
     _atom1: Cartesian3D
@@ -27,7 +28,7 @@ class HydrogenMoleculeInfo:
         calculation file, the atoms in a molecule must either both be ghost, or
         neither are ghost.
         """
-        self.is_ghost = ghost
+        self._is_ghost = ghost
 
     @property
     def is_ghost(self) -> bool:

@@ -4,36 +4,30 @@ This module contains functions for creating MRCC input files.
 
 from __future__ import annotations
 
+import sys
+
 from typing import Any
 from typing import Optional
 
-# set the calculation type
-# set the memory
+from hydro4b_coords.molecule import HydrogenMoleculeInfo
 
-# set the CC parameters
-# set the SCF parameters
-
-# set the basis
-
-# set the molecules
-    # choosing which are ghosts and which aren't should be done outside the API
-
-# set which are ghosts, by default
+from cartesian import operations
 
 
-# PLAN
-# one object collects the data about the MRCC file
-# another takes the aforementioned 'data object', and creates the file
+_CALC_OPTIONS = ["ccsd(t)"]
+_ATOM_CENTRED_BASIS_OPTIONS = ["aug-cc-pVDZ", "aug-cc-pVTZ", "aug-cc-pVQZ"]
+_MIDBOND_BASIS_OPTIONS = ["midbond-3s3p2d"]
 
-_CALC_OPTIONS = ['ccsd(t)']
 
-def _err_msg_valid_options(func_name: str, option: str, valid_options: list[str]) -> str:
-    err_msg_block = [
-        f"'{option}' is not a valid option for '{func_name}'",
-        "The valid options are:",
-    ] + valid_options
-    
-    return '\n'.join(err_msg_block)
+def _funcname():
+    """
+    Returns the name of the function calling this function, by inspecting the
+    stack frame. This is a somewhat hackish solution, so keep the magic code
+    within here.
+    """
+    n_stacks_up = 1  # 0 -> return '_funcname', 1 -> return the calling function's name
+
+    return sys._getframe(n_stacks_up).f_code.co_name
 
 
 class MRCCInputFileData:
@@ -42,27 +36,262 @@ class MRCCInputFileData:
     information needed to create an MRCC input file. This instance is then
     passed to the MRCCInputFileCreator.
     """
+
     _fields: dict[Optional[str], Any]
-    
+
     def __init__(self) -> None:
         self._fields = {
-            'calc': None,
+            "calc": None,
+            "mem_mb": None,
+            "cctol": None,
+            "ccmaxit": None,
+            "scftol": None,
+            "scfdtol": None,
+            "scfmaxit": None,
+            "atom_basis": None,
+            "midbond_basis": None,
+            "molecules": None,
         }
-    
-    def set_calc(self, raw_calc: str) -> None:
-        calc = raw_calc.lower()
-        if calc not in _CALC_OPTIONS:
-            err_msg = _err_msg_valid_options('setcalc', calc, _CALC_OPTIONS)
+
+    def _check_positive_int(self, func_name: str, value: int) -> str:
+        if value <= 0:
+            err_msg = "\n".join(
+                [
+                    f"'{func_name}' must accept a positive integer value",
+                    f"Value entered: {value}",
+                ]
+            )
             raise ValueError(err_msg)
-        
-        self._fields['calc'] = calc
-    
+
+    def _check_valid_options(
+        self, func_name: str, option: str, valid_options: list[str]
+    ) -> str:
+        if option not in valid_options:
+            err_msg = "\n".join(
+                [
+                    f"'{option}' is not a valid option for '{func_name}'",
+                    "The valid options are:",
+                ]
+                + valid_options
+            )
+            raise ValueError(err_msg)
+
+    def set_calculation_type(self, calc: str) -> None:
+        self._check_valid_options(_funcname(), calc.lower(), _CALC_OPTIONS)
+        self._fields["calc"] = calc.lower()
+
+    def set_memory_in_mb(self, mem_mb: int) -> None:
+        self._check_positive_int(_funcname(), mem_mb)
+        self._fields["mem_mb"] = mem_mb
+
+    def set_coupledcluster_tolerance(self, cctol: int) -> None:
+        self._check_positive_int(_funcname(), cctol)
+        self._fields["cctol"] = cctol
+
+    def set_coupledcluster_maxiterations(self, ccmaxit: int) -> None:
+        self._check_positive_int(_funcname(), ccmaxit)
+        self._fields["ccmaxit"] = ccmaxit
+
+    def set_scf_energy_tolerance(self, scftol: int) -> None:
+        """
+        Convergence threshold for the energy in SCF calculations. The energy will
+        stop convenging when the change is less than 10^{-scftol} * Hartrees.
+        """
+        self._check_positive_int(_funcname(), scftol)
+        self._fields["scftol"] = scftol
+
+    def set_scf_density_tolerance(self, scfdtol: int) -> None:
+        """
+        Convergence threshold for the density matrix in SCF calculations. The RMS
+        change in the density matrix will be smaller than 10^{-scfdtol}.
+        """
+        self._check_positive_int(_funcname(), scfdtol)
+        self._fields["scfdtol"] = scfdtol
+
+    def set_scf_maxiterations(self, scfmaxit: int) -> None:
+        self._check_positive_int(_funcname(), scfmaxit)
+        self._fields["scfmaxit"] = scfmaxit
+
+    def set_atom_centred_basis(self, basis: str) -> None:
+        self._check_valid_options(_funcname(), basis, _ATOM_CENTRED_BASIS_OPTIONS)
+        self._fields["atom_basis"] = basis
+
+    def set_midbond_basis(self, basis: str) -> None:
+        self._check_valid_options(_funcname(), basis, _MIDBOND_BASIS_OPTIONS)
+        self._fields["midbond_basis"] = basis
+
+    def set_molecules(self, molecules: list[HydrogenMoleculeInfo]) -> None:
+        # TODO: think of requirements for the list of hydrogen molecules; are there any?
+        self._fields["molecules"] = molecules
+
     @property
     def fields(self) -> dict[Optional[str], Any]:
         return self._fields
-        
-        
 
 
-class MRCCInputFileCreator:
-    pass
+def _basis_lines(mrccdata: MRCCInputFileData) -> str:
+    """
+    Write the set of lines that describe the atom-centred and (optionally) the
+    midbond-centred basis sets used in the electronic structure calculation.
+    """
+    if mrccdata.fields["midbond_basis"] is not None:
+        n_molecules = len(mrccdata.fields["molecules"])
+        n_hydro_atoms_per_molecule = 2
+        n_atoms = n_hydro_atoms_per_molecule * n_molecules
+
+        basis_line = "\n".join(
+            [
+                "basis=mixed",
+                "2",
+                f"{mrccdata.fields['atom_basis']} 1-{n_atoms}",
+                f"{mrccdata.fields['midbond_basis']} {n_atoms+1}",
+            ]
+        )
+    else:
+        basis_line = f"basis={mrccdata.fields['atom_basis']}"
+
+    return basis_line
+
+
+def _position_header_lines(n_atoms: int, has_midbond: bool) -> str:
+    if has_midbond:
+        n_positions = n_atoms + 1
+    else:
+        n_positions = n_atoms
+
+    position_header_lines = "\n".join(["unit=angs", "geom=xyz", f"{n_positions}"])
+
+    return position_header_lines
+
+
+def _coordinates_line(atom: Cartesian3D, *, is_ghost: bool) -> str:
+    """
+    Format the line describing the atom and its cartesian position. Also included
+    is a comment for the user, indicating whether or not that atom is a ghost.
+    """
+    atom_symbol = "H"
+    x, y, z = atom.coordinates
+
+    if is_ghost:
+        comment = "# GHOST ATOM"
+    else:
+        comment = "# REAL ATOM"
+
+    return f"{atom_symbol}   {x: 12.9f}   {y: 12.9f}   {z: 12.9f}   {comment}"
+
+
+def atoms_from_molecules(molecules: list[HydrogenMoleculeInfo]) -> list[Cartesian3D]:
+    """Convenience function to extract the atom positions from the molecules."""
+    atom_positions = list()
+    for mol in molecules:
+        atom_positions.extend(mol.atoms)
+
+    return atom_positions
+
+
+def ghost_status_from_molecules(molecules: list[HydrogenMoleculeInfo]) -> list[bool]:
+    """Convenience function to extract the 'is_ghost' attribute of each atom from the molecules."""
+    ghost_statuses = list()
+    for mol in molecules:
+        mol_ghosts = [mol.is_ghost] * 2
+        ghost_statuses.extend(mol_ghosts)
+
+    return ghost_statuses
+
+
+# def _midbond_atom_line(molecules: list[HydrogenMoleculeInfo]) -> str:
+#    """
+#    Formats the line describing the midbond ghost atom.
+#
+#    The midbond atom isn't a real atom, but rather just a position. However, in the
+#    language of the MRCC program, the only way to include additional basis sets in space
+#    is to create an atom and make it a ghost.
+#
+#    For the current project, it is located at the centroid of all the real atoms.
+#    """
+#    atoms = atoms_from_molecules(molecules)
+#    midbond_atom = operations.centroid(atom_positions)
+#
+#    return _coordinates_lines(midbond_atom, is_ghost=True)
+
+
+def _ghost_indicator_lines(ghost_statuses: list[bool]) -> str:
+    """
+    A comma-separated list of indices indicating which of the atoms are ghost atoms.
+    The MRCC code uses 1-index notation.
+    """
+    ghost_index_line = ",".join(
+        [str(i + 1) for (i, status) in enumerate(ghost_statuses) if status]
+    )
+
+    ghost_lines = "\n".join(
+        [
+            "ghost=serialno",
+            ghost_index_line,
+        ]
+    )
+
+    return ghost_lines
+
+
+def _molecule_geometry_lines(mrccdata: MRCCInputFileData) -> str:
+    """
+    Write the positions of all the hydrogen atoms, and optionally also the midbond
+    ghost atom.
+    """
+    molecules = mrccdata.fields["molecules"]
+    has_midbond = mrccdata.fields["midbond_basis"] is not None
+
+    n_molecules = len(molecules)
+    n_hydro_atoms_per_molecule = 2
+    n_atoms = n_hydro_atoms_per_molecule * n_molecules
+
+    position_header_lines = _position_header_lines(n_atoms, has_midbond)
+
+    atoms = atoms_from_molecules(molecules)
+    ghost_statuses = ghost_status_from_molecules(molecules)
+
+    if has_midbond:
+        midbond_atom = operations.centroid(atoms)
+        atoms.append(midbond_atom)
+        ghost_statuses.append(True)
+
+    atom_lines = "\n".join(
+        [
+            _coordinates_line(atom, is_ghost=gstat)
+            for (atom, gstat) in zip(atoms, ghost_statuses)
+        ]
+    )
+    ghost_lines = _ghost_indicator_lines(ghost_statuses)
+
+    return "\n".join([position_header_lines, "", atom_lines, "", ghost_lines])
+
+
+def write_mrcc_input_file(mrccdata: MRCCInputFileData) -> None:
+    """Write the input file for an MRCC electronic structure calculation."""
+    calculation_type_line = f"calc={mrccdata.fields['calc']}"
+    memory_in_mb_line = f"mem={mrccdata.fields['mem_mb']}"
+    coupledcluster_tolerance_line = f"cctol={mrccdata.fields['cctol']}"
+    coupledcluster_maxiterations_line = f"cctol={mrccdata.fields['ccmaxit']}"
+    scf_energy_tolerance_line = f"scftol={mrccdata.fields['scftol']}"
+    scf_density_tolerance_line = f"scfdtol={mrccdata.fields['scfdtol']}"
+    scf_maxiterations_line = f"scfmaxit={mrccdata.fields['scfmaxit']}"
+
+    basis_lines = _basis_lines(mrccdata)
+    geometry_lines = _molecule_geometry_lines(mrccdata)
+
+    return "\n".join(
+        [
+            calculation_type_line,
+            memory_in_mb_line,
+            coupledcluster_tolerance_line,
+            coupledcluster_maxiterations_line,
+            scf_energy_tolerance_line,
+            scf_density_tolerance_line,
+            scf_maxiterations_line,
+            "",
+            basis_lines,
+            "",
+            geometry_lines,
+        ]
+    )
