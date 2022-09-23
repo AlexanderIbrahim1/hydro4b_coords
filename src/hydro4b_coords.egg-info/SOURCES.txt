@@ -1,6 +1,12 @@
+LICENSE
+README.md
 pyproject.toml
 setup.cfg
 src/hydro4b_coords/__init__.py
+src/hydro4b_coords/geometries.py
+src/hydro4b_coords/lebedev.py
+src/hydro4b_coords/molecule.py
+src/hydro4b_coords/mrcc_input.py
 src/hydro4b_coords/spherical.py
 src/hydro4b_coords.egg-info/PKG-INFO
 src/hydro4b_coords.egg-info/SOURCES.txt

@@ -57,3 +57,22 @@ def get_molecules(
         HydrogenMoleculeInfo.from_orientation(com, orient, bondlength)
         for (com, orient) in zip(centres_of_mass, orientations)
     ]
+
+
+def atoms_from_molecules(molecules: list[HydrogenMoleculeInfo]) -> list[Cartesian3D]:
+    """Convenience function to extract the atom positions from the molecules."""
+    atom_positions = list()
+    for mol in molecules:
+        atom_positions.extend(mol.atoms)
+
+    return atom_positions
+
+
+def ghost_status_from_molecules(molecules: list[HydrogenMoleculeInfo]) -> list[bool]:
+    """Convenience function to extract the 'is_ghost' attribute of each atom from the molecules."""
+    ghost_statuses = list()
+    for mol in molecules:
+        mol_ghosts = [mol.is_ghost] * 2
+        ghost_statuses.extend(mol_ghosts)
+
+    return ghost_statuses
