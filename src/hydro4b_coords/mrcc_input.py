@@ -271,34 +271,3 @@ class MRCCInputFileWriter:
     
         return ghost_lines
 
-
-
-
-#def write_mrcc_input_file(mrccdata: MRCCInputFileData) -> None:
-#    """Write the input file for an MRCC electronic structure calculation."""
-#    calculation_type_line = f"calc={mrccdata.fields['calc']}"
-#    memory_in_mb_line = f"mem={mrccdata.fields['mem_mb']}"
-#    coupledcluster_tolerance_line = f"cctol={mrccdata.fields['cctol']}"
-#    coupledcluster_maxiterations_line = f"cctol={mrccdata.fields['ccmaxit']}"
-#    scf_energy_tolerance_line = f"scftol={mrccdata.fields['scftol']}"
-#    scf_density_tolerance_line = f"scfdtol={mrccdata.fields['scfdtol']}"
-#    scf_maxiterations_line = f"scfmaxit={mrccdata.fields['scfmaxit']}"
-#
-#    basis_lines = _basis_lines(mrccdata)
-#    geometry_lines = _molecule_geometry_lines(mrccdata)
-#
-#    return "\n".join(
-#        [
-#            calculation_type_line,
-#            memory_in_mb_line,
-#            coupledcluster_tolerance_line,
-#            coupledcluster_maxiterations_line,
-#            scf_energy_tolerance_line,
-#            scf_density_tolerance_line,
-#            scf_maxiterations_line,
-#            "",
-#            basis_lines,
-#            "",
-#            geometry_lines,
-#        ]
-#    )

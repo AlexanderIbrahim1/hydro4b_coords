@@ -1,6 +1,7 @@
 import pytest
 
 from hydro4b_coords.mrcc_input import MRCCInputFileData
+from hydro4b_coords.mrcc_input import MRCCInputFileWriter
 from hydro4b_coords import geometries
 from hydro4b_coords import lebedev
 from hydro4b_coords import molecule
@@ -33,7 +34,6 @@ class TestMRCCInputFileData:
     @pytest.mark.parametrize(
         'methodname, value, fieldname',
         [
-            ('set_memory_in_mb', 2048, 'mem_mb'),
             ('set_coupledcluster_tolerance', 9, 'cctol'),
             ('set_coupledcluster_maxiterations', 200, 'ccmaxit'),
             ('set_scf_energy_tolerance', 7, 'scftol'),
@@ -49,6 +49,11 @@ class TestMRCCInputFileData:
         method(value)
         
         assert mrccdata.fields[fieldname] == value
+    
+    def test_set_memory_in_mb(self):
+        mrccdata = MRCCInputFileData()
+        mrccdata.set_memory_in_mb(2048)
+        mrccdata.fields['mem_mb'] == '2048MB'
 
     @pytest.mark.parametrize(
         'methodname, value',
@@ -110,7 +115,9 @@ def test_basis_lines_with_midbond():
         "midbond-3s3p2d 7"
     )
     
-    assert mrcc_input._basis_lines(mrccdata) == expect_basis_lines
+    mrccwriter = MRCCInputFileWriter()
+    
+    assert mrccwriter._basis_lines(mrccdata) == expect_basis_lines
 
 def test_basis_lines_without_midbond():
     mrccdata = MRCCInputFileData()
@@ -121,10 +128,12 @@ def test_basis_lines_without_midbond():
     
     expect_basis_lines = 'basis=aug-cc-pVDZ'
     
-    assert mrcc_input._basis_lines(mrccdata) == expect_basis_lines
+    mrccwriter = MRCCInputFileWriter()
+    assert mrccwriter._basis_lines(mrccdata) == expect_basis_lines
 
 def test_ghost_indices_string():
     ghost_statuses = [True, False, True, True, False, False, True]
     expect_line = '\n'.join(['ghost=serialno', '1,3,4,7'])
     
-    assert mrcc_input._ghost_indicator_lines(ghost_statuses) == expect_line
+    mrccwriter = MRCCInputFileWriter()
+    assert mrccwriter._ghost_indicator_lines(ghost_statuses) == expect_line
