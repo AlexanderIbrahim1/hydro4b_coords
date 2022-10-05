@@ -4,6 +4,7 @@ This module contains functions for creating MRCC input files.
 
 from __future__ import annotations
 
+import pathlib
 import sys
 
 from typing import Any
@@ -134,7 +135,7 @@ class MRCCInputFileWriter:
     def __init__(self) -> None:
         pass
     
-    def write_file(self, mrccdata: MRCCInputFileData, filename: str) -> str:
+    def write_file(self, mrccdata: MRCCInputFileData, filename: str | pathlib.Path) -> str:
         calc_type_line = self._kvpair_line('calc', mrccdata.fields['calc'])
         memory_in_mb_line = self._kvpair_line('mem', mrccdata.fields['mem_mb'])
         cc_tolerance_line = self._kvpair_line('cctol', mrccdata.fields['cctol'])
