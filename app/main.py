@@ -7,6 +7,8 @@ from typing import Any
 from typing import Sequence
 
 from hydro4b_coords import geometries
+from hydro4b_coords.lebedev import LebedevOrientationGenerator
+from hydro4b_coords import lebedev
 from hydro4b_coords import lebedev
 from hydro4b_coords import molecule
 from hydro4b_coords import mrcc_input
@@ -16,11 +18,12 @@ def get_molecules():
     bondlength = 0.766777
 
     lebedev_scheme = lebedev.Lebedev3
-    lebedevgen = lebedev.LebedevOrientationGenerator(lebedev_scheme)
-    lebedevgen.set_n_yielded_orientations(len(centres_of_mass))
+    lebedevgen = lebedev.LebedevOrientationGenerator(lebedev_scheme, len(centres_of_mass))
 
     orientations = lebedevgen.combination(1, 0, 2, 1)
-    return molecule.get_molecules(centres_of_mass, orientations, bondlength)
+    scheme_info = lebedev.schemes.LEBEDEV_SCHEME_MAP[lebedev_scheme]
+    angle_map = scheme_info.angles
+    return molecule.get_molecules(centres_of_mass, orientations, angle_map, bondlength)
 
 def try_mrcc_input():
     mrccdata = mrcc_input.MRCCInputFileData()

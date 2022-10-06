@@ -113,7 +113,7 @@ class TestHydrogenMoleculeAtomicPositions:
         centre = Cartesian3D.origin()
         bondlength = 2.0
 
-        angles = lebedev.LEBEDEV3_ANGLES[orientation]
+        angles = lebedev.schemes.lebedev3.LEBEDEV3_ANGLES[orientation]
 
         point0, point1 = hydrogen_molecule_atomic_positions(
             centre, bondlength, angles.polar, angles.azimuthal
