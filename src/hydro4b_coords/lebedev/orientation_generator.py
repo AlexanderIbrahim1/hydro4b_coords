@@ -6,7 +6,6 @@ LebedevOrientationGenerator
 from __future__ import annotations
 
 import itertools
-from typing import Optional
 
 from hydro4b_coords.lebedev.schemes import LebedevScheme
 from hydro4b_coords.lebedev.schemes import LEBEDEV_SCHEME_MAP
