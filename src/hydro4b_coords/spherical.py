@@ -6,8 +6,10 @@ using them to create points in Cartesian3D space.
 from __future__ import annotations
 
 import math
+from typing import Tuple
 
 from cartesian import Cartesian3D
+from cartesian import CartesianND
 
 
 class Spherical3D:
@@ -60,7 +62,7 @@ def spherical_to_cartesian(sphpoint: Spherical3D) -> Cartesian3D:
 
 def hydrogen_molecule_atomic_positions(
     centre_of_mass: Cartesian3D, bondlength: float, polar: float, azimuthal: float
-) -> (Cartesian3D, Cartesian3D):
+) -> Tuple[CartesianND, CartesianND]:
     """
     Create the positions of the two atoms in the hydrogen molecule, given the
     bond length of the molecule and its angular orientation relative to its

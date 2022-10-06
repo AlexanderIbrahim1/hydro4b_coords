@@ -4,11 +4,11 @@ the electronic structure input file.
 """
 
 from __future__ import annotations
-import enum
 
 from cartesian import Cartesian3D
 
-from hydro4b_coords import lebedev
+from hydro4b_coords.lebedev import LebedevScheme
+from hydro4b_coords.lebedev import LebedevOrientation
 from hydro4b_coords import spherical
 
 
@@ -40,22 +40,28 @@ class HydrogenMoleculeInfo:
 
     @classmethod
     def from_orientation(
-        cls, com: Cartesian3D, orientation: lebedev.Lebedev3, bondlength: float
+        cls, com: Cartesian3D, sphere_angles: LebedevOrientation, bondlength: float
     ) -> HydrogenMoleculeInfo:
-        angles = lebedev.LEBEDEV3_ANGLES[orientation]
         atoms = spherical.hydrogen_molecule_atomic_positions(
-            com, bondlength, angles.polar, angles.azimuthal
+            com, bondlength, sphere_angles.polar, sphere_angles.azimuthal
         )
 
-        return HydrogenMoleculeInfo(atoms[0], atoms[1])
+        return HydrogenMoleculeInfo(atoms[0], atoms[1])  # type: ignore
 
 
 def get_molecules(
-    centres_of_mass: list[Cartesian3D], orientations: list[enum.Enum], bondlength: float
+    centres_of_mass: list[Cartesian3D],
+    orientations: list[LebedevScheme],
+    angle_map: dict[LebedevScheme, LebedevOrientation],
+    bondlength: float,
 ) -> list[HydrogenMoleculeInfo]:
+    assert len(centres_of_mass) == len(orientations)
+
+    sphere_angles = [angle_map[orient] for orient in orientations]
+
     return [
-        HydrogenMoleculeInfo.from_orientation(com, orient, bondlength)
-        for (com, orient) in zip(centres_of_mass, orientations)
+        HydrogenMoleculeInfo.from_orientation(com, angles, bondlength)
+        for (com, angles) in zip(centres_of_mass, sphere_angles)
     ]
 
 

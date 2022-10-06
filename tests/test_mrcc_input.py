@@ -95,7 +95,10 @@ def get_six_molecules() -> list[molecule.HydrogenMoleculeInfo]:
         lebedev.Lebedev3.ORIENT_Z,
     ]
     
-    molecules = molecule.get_molecules(centres_of_mass, orientations, bondlength)
+    scheme_info = lebedev.LEBEDEV_SCHEME_MAP[lebedev.Lebedev3]
+    angle_map = scheme_info.angles
+    
+    molecules = molecule.get_molecules(centres_of_mass, orientations, angle_map, bondlength)
     
     return molecules
     

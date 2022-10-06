@@ -6,9 +6,10 @@ geometries (such as the tetrahedron, etc.).
 import math
 
 from cartesian import Cartesian3D
+from cartesian import CartesianND
 
 
-def tetrahedron(lat_const: float) -> list[Cartesian3D]:
+def tetrahedron(lat_const: float) -> list[CartesianND]:
     return [
         lat_const * Cartesian3D(-0.5, 0.0, 0.0),
         lat_const * Cartesian3D(0.5, 0.0, 0.0),
@@ -17,7 +18,7 @@ def tetrahedron(lat_const: float) -> list[Cartesian3D]:
     ]
 
 
-def equilateral_triangle(lat_const: float) -> list[Cartesian3D]:
+def equilateral_triangle(lat_const: float) -> list[CartesianND]:
     return [
         lat_const * Cartesian3D(-0.5, 0.0, 0.0),
         lat_const * Cartesian3D(0.5, 0.0, 0.0),
