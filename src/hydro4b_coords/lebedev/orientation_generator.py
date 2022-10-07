@@ -7,12 +7,14 @@ from __future__ import annotations
 
 import itertools
 
+from hydro4b_coords.lebedev.orientation import LebedevOrientation
 from hydro4b_coords.lebedev.schemes import LebedevScheme
 from hydro4b_coords.lebedev.schemes import LEBEDEV_SCHEME_MAP
 
 
 class LebedevOrientationGenerator:
     _orientations: list[LebedevScheme]
+    _orientations_to_angles_map: dict[LebedevScheme, LebedevOrientation]
     _n_yielded_orients: int
 
     def __init__(self, scheme: LebedevScheme, n_yielded_orients: int) -> None:
@@ -24,6 +26,7 @@ class LebedevOrientationGenerator:
         """
         scheme_info = LEBEDEV_SCHEME_MAP[scheme]  # type: ignore
         self._orientations = scheme_info.ordered_orientations
+        self._orientations_to_angles_map = scheme_info.angles
 
         self.set_number_of_yielded_orientations(n_yielded_orients)
 
@@ -42,6 +45,10 @@ class LebedevOrientationGenerator:
     @property
     def number_of_orientations(self) -> int:
         return len(self._orientations)
+
+    @property
+    def orientations_to_angles_map(self) -> dict[LebedevScheme, LebedevOrientation]:
+        return self._orientations_to_angles_map
 
     def __iter__(self):
         n_total_orients = len(self._orientations)
