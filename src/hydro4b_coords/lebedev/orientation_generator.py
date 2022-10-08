@@ -12,6 +12,20 @@ from hydro4b_coords.lebedev.schemes import LebedevScheme
 from hydro4b_coords.lebedev.schemes import LEBEDEV_SCHEME_MAP
 
 
+def total_number_of_orientations(scheme: LebedevScheme, n_particles: int) -> int:
+    """Calculate the total number of different combinations of orientations."""
+    if n_particles < 1:
+        raise ValueError(
+            "At least one particle is needed to calculate the total number of orientations.\n"
+            f"Entered: {n_particles}"
+        )
+    
+    scheme_info = LEBEDEV_SCHEME_MAP[scheme]  # type: ignore
+    n_orients = scheme_info.n_orientations
+    
+    return n_orients ** n_particles
+
+
 class LebedevOrientationGenerator:
     _orientations: list[LebedevScheme]
     _orientations_to_angles_map: dict[LebedevScheme, LebedevOrientation]
