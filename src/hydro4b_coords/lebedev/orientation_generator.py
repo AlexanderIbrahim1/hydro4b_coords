@@ -19,11 +19,11 @@ def total_number_of_orientations(scheme: LebedevScheme, n_particles: int) -> int
             "At least one particle is needed to calculate the total number of orientations.\n"
             f"Entered: {n_particles}"
         )
-    
+
     scheme_info = LEBEDEV_SCHEME_MAP[scheme]  # type: ignore
     n_orients = scheme_info.n_orientations
-    
-    return n_orients ** n_particles
+
+    return n_orients**n_particles
 
 
 class LebedevOrientationGenerator:

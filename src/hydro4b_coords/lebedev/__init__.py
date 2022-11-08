@@ -4,4 +4,4 @@ from .schemes import Lebedev5  # noqa
 from .schemes import LEBEDEV_SCHEME_MAP  # noqa
 from .orientation import LebedevOrientation  # noqa
 from .orientation_generator import LebedevOrientationGenerator  # noqa
-from .orientation_generator import total_number_of_orientations # noqa
+from .orientation_generator import total_number_of_orientations  # noqa
