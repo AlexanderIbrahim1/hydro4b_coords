@@ -25,13 +25,9 @@ def irregular_tetrahedron(
 ) -> list[CartesianND]:
     _check_lat_const_positive(lat_const)
 
-    # the specific angle that generates the irregular tetrahedron in question
-    alpha = math.pi - irregular_tetrahedron_angle
-
     equil_tri_height = math.sqrt(3.0 / 4.0)
-
-    y_pos = -equil_tri_height * math.cos(alpha)
-    z_pos = equil_tri_height * math.sin(alpha)
+    y_pos = equil_tri_height * math.cos(irregular_tetrahedron_angle)
+    z_pos = equil_tri_height * math.sin(irregular_tetrahedron_angle)
 
     return [
         lat_const * Cartesian3D(-0.5, 0.0, 0.0),
