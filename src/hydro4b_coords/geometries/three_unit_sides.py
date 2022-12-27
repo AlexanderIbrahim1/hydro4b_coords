@@ -1,6 +1,6 @@
 """
 This module contains functions for generating four-body geometries found in
-the HCP lattice, where 3 of the 6 side lengths of each geometry is equal to
+the HCP lattice, where 3 of the 6 side lengths of each geometry are equal to
 the lattice constant. There are 17 of these geometries.
 
 Recall that a four-body geometry has 6 relative pair distances between all
