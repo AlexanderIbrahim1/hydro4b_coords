@@ -1,11 +1,18 @@
 # fmt: off
-from hydro4b_coords.geometries.tetrahedra import tetrahedron
-from hydro4b_coords.geometries.tetrahedra import irregular_tetrahedron
-from hydro4b_coords.geometries.tetrahedra import irregular_tetrahedron_sqrt2
-from hydro4b_coords.geometries.tetrahedra import irregular_tetrahedron_sqrt3
-from hydro4b_coords.geometries.tetrahedra import irregular_tetrahedron_sqrt83
-
 from hydro4b_coords.geometries.triangles import equilateral_triangle
+
+from hydro4b_coords.geometries.tetrahedron import tetrahedron
+
+from hydro4b_coords.geometries.five_unit_sides import fourbody_geometry_sqrt2
+from hydro4b_coords.geometries.five_unit_sides import fourbody_geometry_sqrt83
+from hydro4b_coords.geometries.five_unit_sides import fourbody_geometry_sqrt3
+
+# old names to keep the previous function calls working
+from hydro4b_coords.geometries.five_unit_sides import irregular_tetrahedron
+from hydro4b_coords.geometries.five_unit_sides import irregular_tetrahedron_sqrt2
+from hydro4b_coords.geometries.five_unit_sides import irregular_tetrahedron_sqrt3
+from hydro4b_coords.geometries.five_unit_sides import irregular_tetrahedron_sqrt83
+
 
 from hydro4b_coords.geometries.four_unit_sides import fourbody_geometry_sqrt2_sqrt2
 from hydro4b_coords.geometries.four_unit_sides import fourbody_geometry_sqrt2_sqrt3
