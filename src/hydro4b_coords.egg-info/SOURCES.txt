@@ -3,7 +3,6 @@ README.md
 pyproject.toml
 setup.cfg
 src/hydro4b_coords/__init__.py
-src/hydro4b_coords/geometries.py
 src/hydro4b_coords/molecule.py
 src/hydro4b_coords/mrcc_input.py
 src/hydro4b_coords/spherical.py
@@ -12,6 +11,15 @@ src/hydro4b_coords.egg-info/SOURCES.txt
 src/hydro4b_coords.egg-info/dependency_links.txt
 src/hydro4b_coords.egg-info/requires.txt
 src/hydro4b_coords.egg-info/top_level.txt
+src/hydro4b_coords/geometries/__init__.py
+src/hydro4b_coords/geometries/checker.py
+src/hydro4b_coords/geometries/five_unit_sides.py
+src/hydro4b_coords/geometries/four_unit_sides.py
+src/hydro4b_coords/geometries/one_unit_side.py
+src/hydro4b_coords/geometries/tetrahedron.py
+src/hydro4b_coords/geometries/three_unit_sides.py
+src/hydro4b_coords/geometries/triangles.py
+src/hydro4b_coords/geometries/two_unit_sides.py
 src/hydro4b_coords/lebedev/__init__.py
 src/hydro4b_coords/lebedev/orientation.py
 src/hydro4b_coords/lebedev/orientation_generator.py
