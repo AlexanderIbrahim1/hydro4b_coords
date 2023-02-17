@@ -1,8 +1,5 @@
 """
 This module contains components for sampling points from 1D distributions.
-
-TODO:
-- replace all assertions with proper exceptions
 """
 
 from __future__ import annotations
@@ -28,8 +25,8 @@ class DiscretizedDistribution:
         args: Optional[list[Any]] = None,
         kwargs: Optional[dict[Any, Any]] = None,
     ) -> None:
-        assert n_terms >= 3
-        assert x_max > x_min
+        _check_number_of_terms(n_terms)
+        _check_bounds_order(x_min, x_max)
 
         self._linspace_domain = np.linspace(x_min, x_max, n_terms)
 
@@ -120,4 +117,21 @@ def _check_nonnegative(value: float, x: float) -> None:
         raise ValueError(
             "All calls to the probability distribution function must evaluate to a nonnegative value.\n"
             f"Found: function evaluates to {value: .12f} at {x: .12f}"
+        )
+
+
+def _check_number_of_terms(n_terms: int) -> None:
+    if n_terms < 3:
+        raise ValueError(
+            "To properly create the discretized probability distribution, the number of\n"
+            "elements in the resulting array must be 3 or greater.\n"
+            f"Entered: {n_terms}"
+        )
+
+
+def _check_bounds_order(x_min: float, x_max: float) -> None:
+    if x_min >= x_max:
+        raise ValueError(
+            "'x_min' must be greater than 'x_max'.\n"
+            f"Found: x_min = {x_min: .12f}, x_max = {x_max: .12f}"
         )
