@@ -3,6 +3,7 @@ This module contains functions for generating groups of 4 points in Cartesian3D 
 from a random distribution of relative pair distances.
 """
 
+import contextlib
 import math
 from dataclasses import dataclass
 from typing import Tuple
@@ -13,17 +14,12 @@ from hydro4b_coords.generate.discretized_distribution import DiscretizedDistribu
 
 FourCartesianPoints = Tuple[Cartesian3D, Cartesian3D, Cartesian3D, Cartesian3D]
 
-# create the distribution
-# sample 6 side lengths
-# try and create four points
-
 
 def sample_fourbody_geometry(
     distrib: DiscretizedDistribution,
     *,
-    return_n_reattempts: bool = False,
     n_max_reattempts: int = 1024,
-) -> FourCartesianPoints | Tuple[FourCartesianPoints, int]:
+) -> FourCartesianPoints:
     """
     Generate four Cartesian3D points, whose six relative side lengths are generated
     by the distribution 'distrib'.
@@ -32,23 +28,34 @@ def sample_fourbody_geometry(
     geometry, this function makes repeated attempts to generate the geometry, rejecting
     failed attempts.
     """
-
-    n_reattempts = 0
     for _ in range(n_max_reattempts):
-        try:
+        with contextlib.suppress(ValueError):
             pairdist_coord = _generate_pair_distances(distrib)
             points = _pairdistance_to_cartesian(pairdist_coord)
-            break
-        except ValueError:
-            n_reattempts += 1
-            continue
+            return points
 
-    _check_n_reattempts(n_reattempts, n_max_reattempts)
+    raise RuntimeError(
+        "Unable to generate four Cartesian3D points with the provided distribution."
+        f"Number of attempts: {n_reattempts}"
+    )
 
-    if return_n_reattempts:
-        return (points, n_reattempts)
-    else:
-        return points
+
+def sample_fourbody_geometry_with_reattempts(
+    distrib: DiscretizedDistribution,
+    *,
+    n_max_reattempts: int = 1024,
+) -> Tuple[FourCartesianPoints, int]:
+    """Like 'sample_fourbody_geometry()', but also returns the number of reattempts made."""
+    for i_reattempt in range(n_max_reattempts):
+        with contextlib.suppress(ValueError):
+            pairdist_coord = _generate_pair_distances(distrib)
+            points = _pairdistance_to_cartesian(pairdist_coord)
+            return (points, i_reattempt)
+
+    raise RuntimeError(
+        "Unable to generate four Cartesian3D points with the provided distribution."
+        f"Number of attempts: {n_reattempts}"
+    )
 
 
 @dataclass(frozen=True)
