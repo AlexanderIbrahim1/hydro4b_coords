@@ -53,9 +53,7 @@ def _zerobased_cumsum(normalized_pdf: np.ndarray[float]) -> np.ndarray[float]:
     an issue where, if the 0th element is not 0.0, then the first bin ends up being
     oversampled.
     """
-    incomplete_cdf = np.cumsum(normalized_pdf)
-
-    return np.concatenate(([0.0], incomplete_cdf))
+    return np.concatenate(([0.0], np.cumsum(normalized_pdf)))
 
 
 def _create_partial_func(
@@ -89,8 +87,11 @@ def _discretize_pdf(
     to make sure they are nonnegative.
 
     To prevent an issue where the 0th element of the cumulative distribution is non-zero,
-    the discretized PDF does not calculate the 0th element. The returned array is 1 element
-    shorter than 'linspace_domain'
+    the discretized PDF does not calculate the last element. The returned array is 1 element
+    shorter than 'linspace_domain'.
+
+    I couldn't think of an ideal, sound solution. However, the number of terms is typically
+    large enough that the second-to-last value is pretty close to the last value anyways.
 
     Parameters
     ----------
