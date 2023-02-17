@@ -36,7 +36,7 @@ def sample_fourbody_geometry(
 
     raise RuntimeError(
         "Unable to generate four Cartesian3D points with the provided distribution."
-        f"Number of attempts: {n_reattempts}"
+        f"Number of attempts: {n_max_reattempts}"
     )
 
 
@@ -54,7 +54,7 @@ def sample_fourbody_geometry_with_reattempts(
 
     raise RuntimeError(
         "Unable to generate four Cartesian3D points with the provided distribution."
-        f"Number of attempts: {n_reattempts}"
+        f"Number of attempts: {n_max_reattempts}"
     )
 
 
