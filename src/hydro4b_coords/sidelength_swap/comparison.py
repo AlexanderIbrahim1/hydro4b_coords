@@ -1,0 +1,40 @@
+"""
+This module contains functions for comparing two instances of 'SixSideLengths'.
+
+The reason for creating special functions for handling comparisons, is that
+sometimes two instances *should* be equal, but one ends up larger than the other
+only due to floating-point errors. This happens frequently enough, especially when
+comparing the sidelengths of geometries from a frozen lattice, that special functions
+should be used.
+"""
+
+from dataclasses import dataclass
+
+from hydro4b_coords.sidelength_swap.common_types import SixSideLengths
+
+
+@dataclass(frozen=True)
+class LessThanRounded:
+    n_round: int
+
+    def __post_init__(self) -> None:
+        assert self.n_round >= 1
+
+    def less_than(self, s0: SixSideLengths, s1: SixSideLengths) -> bool:
+        s0_rounded = tuple([round(val, self.n_round) for val in s0])
+        s1_rounded = tuple([round(val, self.n_round) for val in s1])
+
+        return s0_rounded < s1_rounded
+
+
+@dataclass(frozen=True)
+class LessThanEpsilon:
+    epsilon: float
+
+    def __post_init__(self) -> None:
+        assert self.epsilon > 0.0
+
+    def less_than(self, s0: SixSideLengths, s1: SixSideLengths) -> bool:
+        for (sidelen0, sidelen1) in zip(s0, s1):
+            if abs(sidelen0 - sidelen1) > self.epsilon:
+                return sidelen0 < sidelen1

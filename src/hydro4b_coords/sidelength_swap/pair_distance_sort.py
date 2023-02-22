@@ -6,29 +6,37 @@ Two different four-body geometries might have the same set of six side lengths,
 but in a different order.
 """
 
+from typing import Callable
 from typing import Tuple
 
 from hydro4b_coords.sidelength_swap.common_types import SixSideLengths
+from hydro4b_coords.sidelength_swap.comparison import LessThanEpsilon
 from hydro4b_coords.sidelength_swap.swappers import SWAP_INDICES_FUNCTIONS
+
+SixSideLengthsComparator = Callable[[SixSideLengths, SixSideLengths], bool]
 
 
 def repeated_index_swap_sort(
     sidelens: SixSideLengths,
     n_max_swap_sweeps: int = 1024,
+    comparator: SixSideLengthsComparator = LessThanEpsilon(1.0e-4),
 ) -> SixSideLengths:
     """
     Performs the index swaps over and over again until they no longer change the
     order of the six side lengths.
     """
     for _ in range(n_max_swap_sweeps):
-        sidelens, n_swaps = index_swap_sort(sidelens)
+        sidelens, n_swaps = index_swap_sort(sidelens, comparator)
         if n_swaps == 0:
             break
 
     return sidelens
 
 
-def index_swap_sort(sidelens: SixSideLengths) -> Tuple[SixSideLengths, int]:
+def index_swap_sort(
+    sidelens: SixSideLengths,
+    comparator: SixSideLengthsComparator,
+) -> Tuple[SixSideLengths, int]:
     """
     Attempt to perform all six index swaps on the tuple of sidelengths. Return both
     the final swapped indices, and the number of swaps performed.
@@ -36,7 +44,7 @@ def index_swap_sort(sidelens: SixSideLengths) -> Tuple[SixSideLengths, int]:
     n_swaps = 0
     for swap_func in SWAP_INDICES_FUNCTIONS:
         swapped_sidelens = swap_func(sidelens)
-        if swapped_sidelens < sidelens:
+        if comparator.less_than(swapped_sidelens, sidelens):
             sidelens = swapped_sidelens
             n_swaps += 1
 
