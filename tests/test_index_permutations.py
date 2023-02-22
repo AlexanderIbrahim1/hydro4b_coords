@@ -6,6 +6,7 @@ import pytest
 
 from cartesian import CartesianND
 from cartesian.measure import euclidean_distance
+from hydro4b_coords.sidelength_swap import LessThanEpsilon
 from hydro4b_coords.sidelength_swap import minimum_permutation
 from hydro4b_coords.geometries import fourbody_geometry_sqrt2_sqrt3_sqrt3_a
 from hydro4b_coords.geometries import fourbody_geometry_sqrt2_sqrt3_sqrt3_b
@@ -19,7 +20,6 @@ def all_approx_equal(expected: list[float], actual: list[float]) -> None:
     return all([exp == pytest.approx(act) for (exp, act) in zip(expected, actual)])
 
 
-@pytest.mark.skip
 class Test_minium_permutation:
     def test_basic_functionality(self):
         lat_const = 1.0

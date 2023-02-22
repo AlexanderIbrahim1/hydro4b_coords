@@ -52,7 +52,7 @@ def minimum_permutation(
     current_sidelens = copy.deepcopy(sidelens)
 
     for perm in INDEX_SWAP_PERMUTATIONS:
-        permuted_sidelens = _sidelengths_permutation(sidelens)
+        permuted_sidelens = _sidelengths_permutation(sidelens, perm)
         if less_than_comparator(permuted_sidelens, current_sidelens):
             current_sidelens = permuted_sidelens
 
