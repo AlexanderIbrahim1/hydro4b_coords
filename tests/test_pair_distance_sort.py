@@ -6,7 +6,7 @@ import pytest
 
 from cartesian import CartesianND
 from cartesian.measure import euclidean_distance
-from hydro4b_coords.pair_distance_sort import index_swap_sort
+from hydro4b_coords.sidelength_swap.pair_distance_sort import index_swap_sort
 from hydro4b_coords.geometries import fourbody_geometry_sqrt2_sqrt3_sqrt3_a
 from hydro4b_coords.geometries import fourbody_geometry_sqrt2_sqrt3_sqrt3_b
 
