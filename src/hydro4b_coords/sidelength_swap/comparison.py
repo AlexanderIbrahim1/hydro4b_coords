@@ -15,12 +15,17 @@ from hydro4b_coords.sidelength_swap.common_types import SixSideLengths
 
 @dataclass(frozen=True)
 class LessThanRounded:
+    """
+    Round the elements of both tuples to within a certain number of decimal places
+    before comparing them.
+    """
+
     n_round: int
 
     def __post_init__(self) -> None:
         assert self.n_round >= 1
 
-    def less_than(self, s0: SixSideLengths, s1: SixSideLengths) -> bool:
+    def __call__(self, s0: SixSideLengths, s1: SixSideLengths) -> bool:
         s0_rounded = tuple([round(val, self.n_round) for val in s0])
         s1_rounded = tuple([round(val, self.n_round) for val in s1])
 
@@ -29,12 +34,17 @@ class LessThanRounded:
 
 @dataclass(frozen=True)
 class LessThanEpsilon:
+    """
+    Usual element-wise comparison of two tuples, except two floating-point values are
+    considered equal if they are within 'self.epsilon' of each other.
+    """
+
     epsilon: float
 
     def __post_init__(self) -> None:
         assert self.epsilon > 0.0
 
-    def less_than(self, s0: SixSideLengths, s1: SixSideLengths) -> bool:
+    def __call__(self, s0: SixSideLengths, s1: SixSideLengths) -> bool:
         for (sidelen0, sidelen1) in zip(s0, s1):
             if abs(sidelen0 - sidelen1) > self.epsilon:
                 return sidelen0 < sidelen1

@@ -1,6 +1,6 @@
 """
 This module contains functions that permute the sidelengths in a tuple of six
-sidelengths, in a way that corresponds to the  swapping of two indices in the
+sidelengths, in a way that corresponds to the swapping of two indices in the
 four-body geometry.
 """
 
