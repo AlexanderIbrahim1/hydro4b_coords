@@ -1,2 +1,5 @@
 from hydro4b_coords.sidelength_swap.comparison import LessThanRounded
 from hydro4b_coords.sidelength_swap.comparison import LessThanEpsilon
+
+from hydro4b_coords.sidelength_swap.pair_distance_sort import repeated_index_swap_sort
+from hydro4b_coords.sidelength_swap.pair_distance_sort import index_swap_sort

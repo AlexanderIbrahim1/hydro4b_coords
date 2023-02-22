@@ -6,7 +6,7 @@ import pytest
 
 from cartesian import CartesianND
 from cartesian.measure import euclidean_distance
-from hydro4b_coords.sidelength_swap.pair_distance_sort import index_swap_sort
+from hydro4b_coords.sidelength_swap import repeated_index_swap_sort
 from hydro4b_coords.geometries import fourbody_geometry_sqrt2_sqrt3_sqrt3_a
 from hydro4b_coords.geometries import fourbody_geometry_sqrt2_sqrt3_sqrt3_b
 
@@ -32,11 +32,11 @@ class Test_index_swap_sort:
 
         pairdists0 = relative_pair_distances(points0)
         pairdists0 = rounded_tuple_values(pairdists0, 3)
-        sorted_pairdists0 = index_swap_sort(pairdists0)
+        sorted_pairdists0 = repeated_index_swap_sort(pairdists0)
 
         pairdists1 = relative_pair_distances(points1)
         pairdists1 = rounded_tuple_values(pairdists1, 3)
-        sorted_pairdists1 = index_swap_sort(pairdists0)
+        sorted_pairdists1 = repeated_index_swap_sort(pairdists0)
 
         print(f"pairdists0: {pairdists0}")
         print(f"pairdists1: {pairdists1}")
