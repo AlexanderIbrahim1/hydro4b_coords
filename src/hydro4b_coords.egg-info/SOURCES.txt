@@ -5,7 +5,6 @@ setup.cfg
 src/hydro4b_coords/__init__.py
 src/hydro4b_coords/molecule.py
 src/hydro4b_coords/mrcc_input.py
-src/hydro4b_coords/pair_distance_sort.py
 src/hydro4b_coords/spherical.py
 src/hydro4b_coords.egg-info/PKG-INFO
 src/hydro4b_coords.egg-info/SOURCES.txt
@@ -32,9 +31,14 @@ src/hydro4b_coords/lebedev/schemes/__init__.py
 src/hydro4b_coords/lebedev/schemes/lebedev3.py
 src/hydro4b_coords/lebedev/schemes/lebedev5.py
 src/hydro4b_coords/lebedev/schemes/schemeinfo.py
+src/hydro4b_coords/sidelength_swap/__init__.py
+src/hydro4b_coords/sidelength_swap/common_types.py
+src/hydro4b_coords/sidelength_swap/comparison.py
+src/hydro4b_coords/sidelength_swap/index_permutations.py
+src/hydro4b_coords/sidelength_swap/swappers.py
 tests/test_discretized_distribution.py
 tests/test_fourbody_geometry_side_lengths.py
 tests/test_geometries.py
+tests/test_index_permutations.py
 tests/test_mrcc_input.py
-tests/test_pair_distance_sort.py
 tests/test_spherical.py

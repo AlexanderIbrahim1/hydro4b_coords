@@ -97,6 +97,8 @@ from hydro4b_coords.geometries.one_unit_side import fourbody_geometry_sqrt3_sqrt
 from hydro4b_coords.geometries.one_unit_side import fourbody_geometry_sqrt3_sqrt113_sqrt113_sqrt113_sqrt113
 from hydro4b_coords.geometries.one_unit_side import fourbody_geometry_sqrt3_sqrt113_sqrt113_sqrt113_2
 
+from hydro4b_coords.geometries.combinatorics import MAP_GEOMETRY_TAG_TO_COMBINATORIAL_COUNT
+
 MAP_GEOMETRY_TAG_TO_FUNCTION = {
     '1'                                     : tetrahedron,
     'sqrt2'                                 : fourbody_geometry_sqrt2,
