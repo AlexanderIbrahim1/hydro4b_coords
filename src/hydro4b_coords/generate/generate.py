@@ -95,7 +95,7 @@ def _generate_pair_distances(
     return PairDistanceCoordinate(*pair_distances)
 
 
-def _pairdistance_to_cartesian(
+def pairdistance_to_cartesian(
     pairdists: PairDistanceCoordinate,
 ) -> FourCartesianPoints:
     """
