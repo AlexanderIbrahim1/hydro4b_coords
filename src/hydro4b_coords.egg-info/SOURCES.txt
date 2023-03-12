@@ -17,6 +17,7 @@ src/hydro4b_coords/generate/distributions.py
 src/hydro4b_coords/generate/generate.py
 src/hydro4b_coords/geometries/__init__.py
 src/hydro4b_coords/geometries/checker.py
+src/hydro4b_coords/geometries/combinatorics.py
 src/hydro4b_coords/geometries/five_unit_sides.py
 src/hydro4b_coords/geometries/four_unit_sides.py
 src/hydro4b_coords/geometries/one_unit_side.py
