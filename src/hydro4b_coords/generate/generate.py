@@ -31,7 +31,7 @@ def sample_fourbody_geometry(
     for _ in range(n_max_reattempts):
         with contextlib.suppress(ValueError):
             pairdist_coord = _generate_pair_distances(distrib)
-            points = _pairdistance_to_cartesian(pairdist_coord)
+            points = pairdistance_to_cartesian(pairdist_coord)
             return points
 
     raise RuntimeError(
@@ -49,7 +49,7 @@ def sample_fourbody_geometry_with_reattempts(
     for i_reattempt in range(n_max_reattempts):
         with contextlib.suppress(ValueError):
             pairdist_coord = _generate_pair_distances(distrib)
-            points = _pairdistance_to_cartesian(pairdist_coord)
+            points = pairdistance_to_cartesian(pairdist_coord)
             return (points, i_reattempt)
 
     raise RuntimeError(
@@ -98,6 +98,19 @@ def _generate_pair_distances(
 def pairdistance_to_cartesian(
     pairdists: PairDistanceCoordinate,
 ) -> FourCartesianPoints:
+    """A wrapper function around `six_side_lengths_to_cartesian()`"""
+    r01, r02, r03, r12, r13, r23 = pairdists.unpack()
+    return six_side_lengths_to_cartesian(r01, r02, r03, r12, r13, r23)
+
+
+def six_side_lengths_to_cartesian(
+    r01: float,
+    r02: float,
+    r03: float,
+    r12: float,
+    r13: float,
+    r23: float,
+) -> FourCartesianPoints:
     """
     This function uses the 6 relative pair distances between the four points to
     recover four Cartesian points in 3D space.
@@ -117,8 +130,6 @@ def pairdistance_to_cartesian(
     lost when converting from relative pair distances to Cartesian coordinates. The
     three DOF describing the orientation in space of the four-body system are also lost.
     """
-    r01, r02, r03, r12, r13, r23 = pairdists.unpack()
-
     cos_theta102 = (r01**2 + r02**2 - r12**2) / (2.0 * r01 * r02)
 
     x2 = r02 * cos_theta102
